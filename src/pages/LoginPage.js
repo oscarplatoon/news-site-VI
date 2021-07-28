@@ -1,14 +1,24 @@
 import React, { Component } from 'react';
 import { Button, Form, FormGroup, Input, Label } from 'reactstrap';
+import UserAPI from '../api/UsersAPI'
 
 class LoginPage extends Component {
 
-  handleFormSubmit = (event) => {
-    event.preventDefault();
-    console.log(event.target.elements[0].value);
-    console.log(event.target.elements[1].value);
-  };
 
+  handleFormSubmit = async (event) => {
+    event.preventDefault();
+
+    console.log('EMAIL:', event.target.email.value)
+    console.log('PASSWORD:', event.target.password.value)
+
+    let userObj = {
+      email: event.target.email.value,
+      password: event.target.password.value
+    }
+    let response = await UserAPI.login(userObj)
+    this.props.handleLogin(response)
+    return this.props.history.push('/')
+  };
   render() {
     return (
       <div style={{padding: '20px'}}>
@@ -25,8 +35,7 @@ class LoginPage extends Component {
           <Button>Submit</Button>
         </Form>
       </div>
-    )
-  }
+    )}
 }
 
 export default LoginPage;

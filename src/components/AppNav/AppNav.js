@@ -7,6 +7,8 @@ class AppNav extends Component {
   render() {
     return (
       <Navbar color="light">
+        <Link to="/">HOME</Link>
+        <Link to="/login">LOGIN</Link>
         {navItems.map((navItem) =>
           <NavItem>
             <Link to={`/sections/${navItem.value}`} >
@@ -16,6 +18,7 @@ class AppNav extends Component {
         )}
         <NavItem>
           <Link to="/add-article">Add an Article</Link>
+          
         </NavItem>
       </Navbar>
     )
