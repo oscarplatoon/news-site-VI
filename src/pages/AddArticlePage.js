@@ -1,110 +1,50 @@
-import React, { Component } from 'react';
-import { addArticle } from '../api/ArticlesAPI';
-import { Redirect } from 'react-router-dom';
-import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
+import React, { useState } from 'react';
+import { Form, Button, Alert } from 'react-bootstrap'
+import { addArticle } from '../api/ArticlesAPI'
 
-class AddArticlePage extends Component {
-  state = {
-    redirect: false
+const AddArticlePage = (props) => {
+  const [message, setMessage] = useState(null)
+
+  const handleFormSubmit = async (evt) => {
+    evt.preventDefault()
+    let articleObject = {
+      title: evt.target.title.value || null,
+      byline: evt.target.byline.value || null,
+      abstract: evt.target.abstract.value || null
+    }
+    let response = await addArticle(articleObject, localStorage.getItem('token'));
+    if (response.message) {
+      setMessage(response.message)
+    } else {
+      props.history.push(`/articles/${response.id}`)
+    }
   }
 
-  handleFormSubmit = async (event) => {
-    event.preventDefault();
-    const articleObject = {
-      title: event.target.elements[0].value,
-      byline: event.target.elements[1].value,
-      abstract: event.target.elements[2].value
-    }
-
-    try {
-      const response = await addArticle(articleObject);
-      if (response.status === 200) {
-        // redirect the user back to Home Page upon successful POST
-        this.setState({ redirect: true });
-      } else {
-        const jsonData = await response.json();
-        alert(jsonData.error.message);
+  return (
+    <div>
+      {
+        message
+        &&
+        <Alert className='m-3' variant='danger'>There was an issue posting your article. Try again.</Alert>
       }
-    } catch (err) {
-      console.error('error occurred posting article: ', err);
-    }
-  }
-
-  render() {
-    if (this.state.redirect) {
-      return <Redirect to='/' />
-    }
-
-    return (
-      <div style={{ padding: '20px' }}>
-        <h3> Add an Article </h3>
-        <Form onSubmit={this.handleFormSubmit}>
-          <FormGroup>
-            <Label for="title">Title</Label>
-            <Input type="text" name="title" id="title" />
-          </FormGroup>
-          <FormGroup>
-            <Label for="byline">Byline</Label>
-            <Input type="text" name="byline" id="byline" />
-          </FormGroup>
-          <FormGroup>
-            <Label for="abstract">Abstract</Label>
-            <Input type="textarea" name="abstract" id="abstract" />
-          </FormGroup>
-          <Button>Submit</Button>
-        </Form>
-      </div>
-    )
-  }
-}
+      <h1 className='m-3'>Add New Article</h1>
+      <Form onSubmit={handleFormSubmit}>
+        <Form.Group controlId="formBasicEmail" className='m-3'>
+          <Form.Label>Title</Form.Label>
+          <Form.Control type="text" name='title' placeholder="Title" />
+        </Form.Group>
+        <Form.Group controlId="formBasicPassword" className='m-3'>
+          <Form.Label>Byline</Form.Label>
+          <Form.Control type="text" name='byline' placeholder="This is the byline" />
+        </Form.Group>
+        <Form.Group controlId="formBasicPassword" className='m-3'>
+          <Form.Label>Abstract</Form.Label>
+          <Form.Control type="text" name='abstract' placeholder="This is the abstract" />
+        </Form.Group>
+        <Button variant="outline-primary" size="lg" className='m-3' block type="submit">Submit</Button>
+      </Form>
+    </div>
+  );
+};
 
 export default AddArticlePage;
-
-
-// Functional solution:
-// function AddArticlePage() {
-//   const [ redirect, setRedirect ] = React.useState(false);
-
-//   const handleFormSubmit = async (event) => {
-//     event.preventDefault();
-//     const articleObject = {
-//       title: event.target.elements[0].value,
-//       byline: event.target.elements[1].value,
-//       abstract: event.target.elements[2].value
-//     }
-
-//     try {
-//       const response = await addArticle(articleObject);
-//       if (response.status === 200) {
-//         // redirect the user back to Home Page upon successful POST
-//         setRedirect(true);
-//       } else {
-//         const jsonData = await response.json();
-//         alert(jsonData.error.message);
-//       }
-//     } catch (err) {
-//       console.error('error occurred posting article: ', err);
-//     }
-//   };
-
-//   return redirect ? <Redirect to='/' /> : (
-//     <div style={{ padding: '20px' }}>
-//       <h3> Add an Article </h3>
-//       <Form onSubmit={handleFormSubmit}>
-//         <FormGroup>
-//           <Label for="title">Title</Label>
-//           <Input type="text" name="title" id="title" />
-//         </FormGroup>
-//         <FormGroup>
-//           <Label for="byline">Byline</Label>
-//           <Input type="text" name="byline" id="byline" />
-//         </FormGroup>
-//         <FormGroup>
-//           <Label for="abstract">Abstract</Label>
-//           <Input type="textarea" name="abstract" id="abstract" />
-//         </FormGroup>
-//         <Button>Submit</Button>
-//       </Form>
-//     </div>
-//   )
-// };

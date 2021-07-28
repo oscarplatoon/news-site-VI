@@ -12,7 +12,8 @@ module.exports = function(app) {
   User.create([
     {username: 'John', email: 'john@doe.com', password: 'opensesame'},
     {username: 'Jane', email: 'jane@doe.com', password: 'opensesame'},
-    {username: 'Bob', email: 'bob@projects.com', password: 'opensesame'}
+    {username: 'Bob', email: 'bob@projects.com', password: 'opensesame'},
+    {username: 'Tom', email: 'tom@email.com', password: '123'},
   ], function(err, users) {
     if (err) throw err;
 

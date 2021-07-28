@@ -1,44 +1,65 @@
-const BASE_URL = 'http://localhost:3001/api/articles';
+const URL = 'http://localhost:3001/api/articles'
 
 const fetchArticleByID = async (articleID) => {
-  const response = await fetch(`${BASE_URL}/${articleID}`);
-  const data = await response.json();
-  return data;
-};
+  try {
+    let response = await fetch(`${URL}/${articleID}`)
+    let data = await response.json()
+    return data
+  }
+  catch(err) {
+    console.log(err)
+  }
+}
 
 const fetchArticlesBySection = async (section) => {
-  const response = await fetch(`${BASE_URL}?filter={"where":{"section":"${section}"}}`);
-  const data = await response.json();
-  return data;
+  try {
+    const response = await fetch(`${URL}?filter={"where":{"section":"${section}"}}`);
+    const data = await response.json();
+    return data;
+  }
+  catch(err) {
+    console.error('There was an error.')
+  }
 };
 
-const fetchArticles = async (filters = null) => {
-  const url = filters ? `${BASE_URL}?filter={"where":${filters}}` : BASE_URL;
-  const response = await fetch(url);
-  const data = await response.json();
-  return data;
-};
+const fetchArticles = (filters = null) => {
+  console.log('Fetch Articles')
+  try {
+    return fetch(`${URL}${filters !== null ? `?filter={"where":{"title":{"ilike":"${filters}"}}}` : ''}`)
+    .then(res => res.json())
+    .then(data => data)
+    .catch(err => {
+      console.log(err)
+    })
+  }
+  catch(err) {
+    console.error(err)
+  }
+}
 
-const searchArticles = async (textToSearchFor) => {
-  const response = await fetch(`${BASE_URL}?filter={"where":{"title":{"ilike":"${textToSearchFor}"}}}`)
-  const data = await response.json();
-  return data;
-};
-
-const addArticle = (articleObject) => {
-  return fetch(BASE_URL, {
+const addArticle = (articleObject, token) => {
+  console.log(token)
+  return fetch(URL, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': token
     },
-    method: "POST",
+    method: 'POST',
     body: JSON.stringify(articleObject)
-  });
-};
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      return {'message': data.error.message, 'statusCode': 200}
+    } else {
+      return data
+    }
+  })
+}
 
 export {
   fetchArticleByID,
   fetchArticles,
   fetchArticlesBySection,
-  searchArticles,
-  addArticle,
+  addArticle
 };

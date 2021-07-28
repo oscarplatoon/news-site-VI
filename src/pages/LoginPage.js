@@ -1,59 +1,40 @@
-import React, { Component } from 'react';
-import { Button, Form, FormGroup, Input, Label } from 'reactstrap';
+import React from 'react';
+import { Form, Button } from 'react-bootstrap';
+import login from '../api/UsersAPI';
 
-class LoginPage extends Component {
+const Login = (props) => {
+  const { handleLogin } = props;
 
-  handleFormSubmit = (event) => {
-    event.preventDefault();
-    console.log(event.target.elements[0].value);
-    console.log(event.target.elements[1].value);
-  };
-
-  render() {
-    return (
-      <div style={{padding: '20px'}}>
-        <h3> Login </h3>
-        <Form onSubmit={this.handleFormSubmit}>
-          <FormGroup>
-            <Label for="email">Email</Label>
-            <Input type="email" name="email" id="email" />
-          </FormGroup>
-          <FormGroup>
-            <Label for="password">Password</Label>
-            <Input type="password" name="password" id="password" />
-          </FormGroup>
-          <Button>Submit</Button>
-        </Form>
-      </div>
-    )
+  const getLoginInfo = async (evt) => {
+    evt.preventDefault()
+    console.log("Email: ", evt.target.email.value)
+    console.log("Password: ", evt.target.password.value)
+    let userObj = {
+      email: evt.target.email.value,
+      password: evt.target.password.value
+    };
+    let response = await login(userObj)
+    handleLogin(response)
+    return props.history.push('/')
   }
-}
 
-export default LoginPage;
+  return (
+    <div>
+    <h1 className='m-3'>Login</h1>
+      <Form onSubmit={ getLoginInfo } className='m-5'>
+        <Form.Group className='pt-3' controlId="formBasicEmail">
+          <Form.Label>Email address</Form.Label>
+          <Form.Control type="email" placeholder="Enter email" name='email' />
+        </Form.Group>
 
+        <Form.Group className='pt-3' controlId="formBasicPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control type="password" placeholder="Password" name='password' />
+        </Form.Group>
+        <Button size='lg' block variant="primary" className='mt-3' type="submit">Submit</Button>
+      </Form>
+    </div>
+  );
+};
 
-// Functional solution:
-// function LoginPage() {
-//   const handleFormSubmit = (event) => {
-//     event.preventDefault();
-//     console.log(event.target.elements[0].value);
-//     console.log(event.target.elements[1].value);
-//   };
-
-//   return (
-//     <div style={{ padding: '20px' }}>
-//       <h3> Login </h3>
-//       <Form onSubmit={handleFormSubmit}>
-//         <FormGroup>
-//           <Label for="email">Email</Label>
-//           <Input type="email" name="email" id="email" />
-//         </FormGroup>
-//         <FormGroup>
-//           <Label for="password">Password</Label>
-//           <Input type="password" name="password" id="password" />
-//         </FormGroup>
-//         <Button>Submit</Button>
-//       </Form>
-//     </div>
-//   )
-// };
+export default Login;

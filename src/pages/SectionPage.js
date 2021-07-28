@@ -1,72 +1,33 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { fetchArticlesBySection } from '../api/ArticlesAPI';
 import ArticleList from '../components/ArticleList/ArticleList.js'
-import { fetchArticlesBySection } from '../api/ArticlesAPI.js'
+import { withRouter } from "react-router";
 
-class SectionPage extends Component {
-  state = {
-    articles: []
-  }
 
-  fetchArticles = () => {
-    fetchArticlesBySection(this.props.match.params.sectionID)
-      .then((apiResponseJSON) => {
-        this.setState({
-          articles: apiResponseJSON
-        });
-      })
-      .catch((e) => {
-        console.error('error fetching articles: ', e);
-      });
-  }
+const SectionPage = (props) => {
+  const [articles, setArticles] = useState([])
+  const [section, setSection] = useState(null)
 
-  componentDidMount() {
-    this.fetchArticles();
-  }
-
-  componentDidUpdate(_prevProps, prevState) {
-    if (prevState === this.state) {
-      this.fetchArticles();
+  console.log(props)
+  useEffect(() => {
+    let sectionID = props.match.params.sectionID;
+    if (sectionID !== section) {
+      setSection(sectionID);
+      console.log(sectionID)
+      fetchArticlesBySection(sectionID)
+      .then(res => setArticles(res))
     }
-  }
+  })
 
-  render() {
-    return (
-      <div>
-        <ArticleList articles={this.state.articles} />
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <h1>{`${section} Section`}</h1>
+      <ArticleList articles={articles} />
+      <Link to='/'>Back</Link>
+    </div>
 
-export default SectionPage;
+  );
+};
 
-// Functional solution:
-// function SectionPage(props) {
-//   const [ articles, setArticles ] = React.useState([]);
-//   const [ sectionID, setSectionID ] = React.useState(props.match.params.sectionID);
-
-//   React.useEffect(() => {
-//     const fetchArticles = async () => {
-//       try {
-//         const apiResponseJSON = await fetchArticlesBySection(props.match.params.sectionID);
-//         setArticles(apiResponseJSON);
-//       } catch (e) {
-//         console.error('error fetching articles: ', e);
-//       };
-//     };
-
-//     if (!articles.length) { // when the component first mounts, fetch articles
-//       fetchArticles();
-//     }
-//     else if (sectionID !== props.match.params.sectionID) { // when the sectionID changes, fetch articles
-//       setSectionID(props.match.params.sectionID);
-//       fetchArticles();
-//     }
-//   }, [articles, props.match.params.sectionID]);
-
-//   return (
-//     <div>
-//       <ArticleList articles={articles} />
-//     </div>
-//   );
-// }
+export default withRouter(SectionPage);
