@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { addArticle } from '../api/ArticlesAPI';
 import { Redirect } from 'react-router-dom';
 import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
+import UserContext from '../contexts/UserContext';
 
 class AddArticlePage extends Component {
   state = {
@@ -17,7 +18,7 @@ class AddArticlePage extends Component {
     }
 
     try {
-      const response = await addArticle(articleObject);
+      const response = await addArticle(articleObject, userContext.user.id);
       if (response.status === 200) {
         // redirect the user back to Home Page upon successful POST
         this.setState({ redirect: true });
@@ -37,22 +38,28 @@ class AddArticlePage extends Component {
 
     return (
       <div style={{ padding: '20px' }}>
-        <h3> Add an Article </h3>
-        <Form onSubmit={this.handleFormSubmit}>
-          <FormGroup>
-            <Label for="title">Title</Label>
-            <Input type="text" name="title" id="title" />
-          </FormGroup>
-          <FormGroup>
-            <Label for="byline">Byline</Label>
-            <Input type="text" name="byline" id="byline" />
-          </FormGroup>
-          <FormGroup>
-            <Label for="abstract">Abstract</Label>
-            <Input type="textarea" name="abstract" id="abstract" />
-          </FormGroup>
-          <Button>Submit</Button>
-        </Form>
+          <h3> Add an Article </h3>
+          <UserContext.Consumer>
+            {userContext => (
+              userContext.user ? (
+              <Form onSubmit={this.handleFormSubmit}>
+                <FormGroup>
+                  <Label for="title">Title</Label>
+                  <Input type="text" name="title" id="title" />
+                </FormGroup>
+                <FormGroup>
+                  <Label for="byline">Byline</Label>
+                  <Input type="text" name="byline" id="byline" />
+                </FormGroup>
+                <FormGroup>
+                  <Label for="abstract">Abstract</Label>
+                  <Input type="textarea" name="abstract" id="abstract" />
+                </FormGroup>
+                <Button>Submit</Button>
+              </Form>)
+              : <Redirect to='/login' /> )   
+            }
+        </UserContext.Consumer>
       </div>
     )
   }
