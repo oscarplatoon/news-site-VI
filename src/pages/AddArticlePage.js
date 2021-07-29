@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import { addArticle } from '../api/ArticlesAPI';
 import { Redirect } from 'react-router-dom';
 import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
+import UserContext from '../contexts/UserContext';
+import { token } from 'loopback';
+
+// in the render()
 
 class AddArticlePage extends Component {
   state = {
@@ -17,7 +21,7 @@ class AddArticlePage extends Component {
     }
 
     try {
-      const response = await addArticle(articleObject);
+      const response = await addArticle(articleObject, token);
       if (response.status === 200) {
         // redirect the user back to Home Page upon successful POST
         this.setState({ redirect: true });
@@ -38,6 +42,8 @@ class AddArticlePage extends Component {
     return (
       <div style={{ padding: '20px' }}>
         <h3> Add an Article </h3>
+        <UserContext.Consumer>
+        {userContext => (
         <Form onSubmit={this.handleFormSubmit}>
           <FormGroup>
             <Label for="title">Title</Label>
@@ -53,6 +59,8 @@ class AddArticlePage extends Component {
           </FormGroup>
           <Button>Submit</Button>
         </Form>
+        )}
+      </UserContext.Consumer>
       </div>
     )
   }
