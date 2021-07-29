@@ -3,7 +3,8 @@ import { addArticle } from '../api/ArticlesAPI';
 import { Redirect } from 'react-router-dom';
 import { Button, Form, FormGroup, Input, Label } from 'reactstrap'
 import UserContext from '../contexts/UserContext';
-import { token } from 'loopback';
+
+
 
 // in the render()
 
@@ -14,6 +15,7 @@ class AddArticlePage extends Component {
 
   handleFormSubmit = async (event) => {
     event.preventDefault();
+    let token = user.user.id
     const articleObject = {
       title: event.target.elements[0].value,
       byline: event.target.elements[1].value,
@@ -42,8 +44,6 @@ class AddArticlePage extends Component {
     return (
       <div style={{ padding: '20px' }}>
         <h3> Add an Article </h3>
-        <UserContext.Consumer>
-        {userContext => (
         <Form onSubmit={this.handleFormSubmit}>
           <FormGroup>
             <Label for="title">Title</Label>
@@ -59,12 +59,11 @@ class AddArticlePage extends Component {
           </FormGroup>
           <Button>Submit</Button>
         </Form>
-        )}
-      </UserContext.Consumer>
       </div>
     )
   }
 }
+AddArticlePage.contextType = UserContext
 
 export default AddArticlePage;
 

@@ -25,7 +25,7 @@ const searchArticles = async (textToSearchFor) => {
   return data;
 };
 
-const addArticle = (articleObject) => {
+const addArticle = (articleObject, token) => {
   return fetch(BASE_URL, {
     headers: {
       'Content-Type': 'application/json',

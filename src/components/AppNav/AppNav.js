@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, NavItem } from 'reactstrap';
 import navItems from '../../config/Sections.json';
-import UserContext from '../../contexts/UserContext';
+
 
 class AppNav extends Component {
   render() {
