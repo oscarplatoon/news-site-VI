@@ -3,10 +3,13 @@ import { Link } from 'react-router-dom';
 import { Navbar, NavItem } from 'reactstrap';
 import navItems from '../../config/Sections.json';
 
+
 class AppNav extends Component {
   render() {
     return (
       <Navbar color="light">
+        <Link to="/">HOME</Link>
+        <Link to="/login">LOGIN</Link>
         {navItems.map((navItem) =>
           <NavItem>
             <Link to={`/sections/${navItem.value}`} >
